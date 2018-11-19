@@ -1,8 +1,14 @@
 import numpy as np
 import cv2 as cv
+import math
 from matplotlib import pyplot as plt
 
+
+
+
 if __name__ == '__main__':
+
+	iterations = 1
 
 	#############################
 	img = cv.imread('images/barbara.jpg', cv.IMREAD_COLOR)
@@ -53,6 +59,8 @@ if __name__ == '__main__':
 
 	eig_vector_large = np.zeros((rows, cols, 2))
 	eig_vector_small = np.zeros((rows, cols, 2))
+	T = np.zeros((2,2))
+	final_image=img.copy()
 
 	for chan in range(chans):
 		G[:, :, 0, 0] += gradxsq[:, :, chan]
@@ -72,7 +80,7 @@ if __name__ == '__main__':
 
 	for row in range(rows):
 		for col in range(cols):
-			G[row, col, :, :] = cv.GaussianBlur(G[row, col, :, :], (3, 3), 0)
+		#	G[row, col, :, :] = cv.GaussianBlur(G[row, col, :, :], (3, 3), 0)
 			eig_values, eig_vectors = np.linalg.eig(G[row, col, :, :])
 			if (eig_values[0] > eig_values[1]):
 				eig_value_large[row, col] = eig_values[0]
@@ -84,6 +92,25 @@ if __name__ == '__main__':
 				eig_value_small[row, col] = eig_values[0]
 				eig_vector_large[row, col, :] = eig_vectors[:, 1]
 				eig_vector_small[row, col, :] = eig_vectors[:, 0]
+			if (1+eig_value_small[row,col]+eig_value_large[row,col])<0:
+				print(eig_value_small[row,col])
+
+	for i in range(iterations):
+		for row in range(rows):
+			for col in range(cols):
+				c1 = 1.0*(1.0/(1+eig_value_large[row, col]+eig_value_small[row, col]))
+				c2 = 1.0*(1.0/math.sqrt(1+eig_value_large[row, col]+eig_value_small[row, col]))
+				T= c1*(eig_vector_large[row, col, :] @ np.transpose(eig_vector_large[row, col, :])) + c2*(eig_vector_small[row, col, :] @ np.transpose(eig_vector_small[row, col, :]))
+				for chan in range(chans):
+					final_image[row,col,chan] += np.trace(np.multiply(T,H[row,col,chan,:,:]))
+
+	cv.imshow('answer', final_image)
+	cv.waitKey()
+
+
+
+
+
 
 
 	
