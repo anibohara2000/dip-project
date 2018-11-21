@@ -8,7 +8,7 @@ from matplotlib import pyplot as plt
 
 if __name__ == '__main__':
 
-	iterations = 50
+	iterations = 5
 	img = cv.imread('images/bears.jpg', cv.IMREAD_COLOR)
 	for i in range(iterations):
 	#############################
@@ -100,9 +100,9 @@ if __name__ == '__main__':
 			for col in range(cols):
 				c1 = 1.0*(1.0/(1+max(eig_value_large[row, col]+eig_value_small[row, col],0)))
 				c2 = 1.0*(1.0/math.sqrt(1+max(eig_value_large[row, col]+eig_value_small[row, col],0)))
-				T= c1*(eig_vector_large[row, col, :] @ np.transpose(eig_vector_large[row, col, :])) + c2*(eig_vector_small[row, col, :] @ np.transpose(eig_vector_small[row, col, :]))
+				T= c1*(np.reshape(eig_vector_large[row, col, :],(2,1)) @ np.reshape(np.transpose(eig_vector_large[row, col, :]),(1,2))) + c2*(np.reshape(eig_vector_small[row, col, :],(2,1))@ np.reshape(np.transpose(eig_vector_small[row, col, :]),(1,2)))
 				for chan in range(chans):
-					img[row,col,chan] += 
+					img[row,col,chan] += np.trace(T @ H[row,col,chan,:,:])
 
 	imgRGB = img.copy()
 	imgRGB[:, :, 0] = img[:, :, 2]
