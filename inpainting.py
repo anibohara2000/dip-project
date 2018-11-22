@@ -8,15 +8,16 @@ from matplotlib import pyplot as plt
 
 if __name__ == '__main__':
 
-	iterations = 5000
-	img = cv.imread('images/inpainting/corrupt_images/spectacles_corrupt.jpg', cv.IMREAD_COLOR)
-	mask = cv.imread('images/inpainting/masks/spectacles_mask.jpg',cv.IMREAD_GRAYSCALE)
+	iterations = 1500
+	img = cv.imread('images/inpainting/corrupt_images/eye_corrupt.jpg', cv.IMREAD_COLOR)
+	img = img.astype(float)
+	mask = cv.imread('images/inpainting/masks/eye_mask.png',cv.IMREAD_GRAYSCALE)
 	rows, cols, chans = img.shape
 	for row in range(rows):
 		for col in range(cols):
 			if mask[row,col] != 0:
 				for chan in range(chans):
-					img[row,col,chan]=0
+					img[row,col,chan]=127
 
 	for i in range(iterations):
 	#############################
@@ -111,12 +112,17 @@ if __name__ == '__main__':
 		for row in range(rows):
 			for col in range(cols):
 				if mask[row,col] != 0:
-					c1 = 2.5*(1.0/(1+max(eig_value_large[row, col]+eig_value_small[row, col],0)))
-					c2 = 2.5*(1.0/math.sqrt(1+max(eig_value_large[row, col]+eig_value_small[row, col],0)))
+					c1 = 1.0*(1.0/(1+max(eig_value_large[row, col]+eig_value_small[row, col],0)))
+					c2 = 1.0*(1.0/math.sqrt(1+max(eig_value_large[row, col]+eig_value_small[row, col],0)))
 					T= c1*(np.reshape(eig_vector_large[row, col, :],(2,1)) @ np.reshape(np.transpose(eig_vector_large[row, col, :]),(1,2))) + c2*(np.reshape(eig_vector_small[row, col, :],(2,1))@ np.reshape(np.transpose(eig_vector_small[row, col, :]),(1,2)))
 					for chan in range(chans):
 						img[row,col,chan] += np.trace(T @ H[row,col,chan,:,:])
 
+		img[img < 0]=0
+		img[img > 255]=255
+
+
+	img = img.astype(np.uint8)
 	imgRGB = img.copy()
 	imgRGB[:, :, 0] = img[:, :, 2]
 	imgRGB[:, :, 2] = img[:, :, 0]
