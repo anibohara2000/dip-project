@@ -10,12 +10,14 @@ if __name__ == '__main__':
 	fig = plt.figure()
 	# iterations_l = [5, 10, 15, 20, 30, 50]
 	# for iter_i, iterations in enumerate(iterations_l):
-	sigma = 100
+	sigma = 10
 
 	iterations = 5
-	img = cv.imread('images/lossy_restoration/lossy/barbara_lossy.jpg', cv.IMREAD_COLOR)
+	img = cv.imread('../images/lossy_restoration/lossy/owl_lossy.jpg', cv.IMREAD_COLOR)
 	img_orig = img.copy()
 	img = img.astype(float)
+
+	sgm = 40
 
 	for i in range(iterations):
 	#############################
@@ -114,7 +116,8 @@ if __name__ == '__main__':
 				# print(T)
 				for chan in range(chans):
 					# print("prev: " + str(img[row, col, chan]))
-					img[row,col,chan] += np.trace(T @ H[row,col,chan,:,:])
+					x = np.trace(T @ H[row,col,chan,:,:])
+					img[row,col,chan] += x * math.exp((-1.0 * x * x) / (sgm * sgm))
 					# print("new: " + str(img[row, col, chan]))
 					# print("added: " + str(np.trace(T @ H[row,col,chan,:,:])))
 		print(str((i * 100) / iterations) + "\% done")
