@@ -3,7 +3,7 @@ import cv2 as cv
 from matplotlib import pyplot as plt
 
 if __name__ == '__main__':
-	img = cv.imread('images/index.jpg', cv.IMREAD_COLOR)
+	img = cv.imread('images/inpainting/corrupt_images/street_corrupt.png', cv.IMREAD_COLOR)
 	imgRGB = img.copy()
 	imgRGB[:, :, 0] = img[:, :, 2]
 	imgRGB[:, :, 2] = img[:, :, 0]
@@ -13,7 +13,7 @@ if __name__ == '__main__':
 	rows, cols, chans = img.shape
 	mask = np.zeros([rows,cols])
 	intensities = np.zeros(chans)
-	threshold  = 1000
+	threshold  = 12000
 	for i in range(chans):
 		intensities[i] = int(input())
 
