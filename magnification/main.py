@@ -10,12 +10,15 @@ if __name__ == '__main__':
 	fig = plt.figure()
 	# iterations_l = [5, 10, 15, 20, 30, 50]
 	# for iter_i, iterations in enumerate(iterations_l):
-	sigma = 3
+	sigma = 7
 
-	iterations = 500
-	img = cv.imread('../images/noise_removal/noisy/barbara_noisy.png', cv.IMREAD_COLOR)
+	iterations = 5
+	img = cv.imread('../images/magnification/small/barbara_s1.png', cv.IMREAD_COLOR)
+	final_size = (512, 512)
+	img = cv.resize(img, final_size, interpolation=cv.INTER_NEAREST)
 	img_orig = img.copy()
 	img = img.astype(float)
+	sgm = 30
 
 	for i in range(iterations):
 	#############################
@@ -86,8 +89,6 @@ if __name__ == '__main__':
 		H[:, :, :, 1, 0] = cv.Sobel(gradx, cv.CV_64F, 0, 1, ksize=1)
 		H[:, :, :, 1, 1] = cv.Sobel(grady, cv.CV_64F, 0, 1, ksize=1)
 
-		delta_img = np.zeros(img.shape);
-
 		for row in range(rows):
 			for col in range(cols):
 				G[row, col, :, :] = cv.GaussianBlur(G[row, col, :, :], (3, 3), sigma)
@@ -108,13 +109,14 @@ if __name__ == '__main__':
 		for row in range(rows):
 			for col in range(cols):
 				c1 = 1.0*(1.0/(1+eig_value_large[row, col]+eig_value_small[row, col]))
-				c2 = 1.0*(1.0/math.sqrt(1+max(eig_value_large[row, col]+eig_value_small[row, col],0)))
+				c2 = 1.0*(1.0/math.sqrt(1+eig_value_large[row, col]+eig_value_small[row, col]))
 				T = c1*(np.reshape(eig_vector_large[row, col, :],(2,1)) @ np.reshape(np.transpose(eig_vector_large[row, col, :]),(1,2)))\
 					+ c2*(np.reshape(eig_vector_small[row, col, :],(2,1))@ np.reshape(np.transpose(eig_vector_small[row, col, :]),(1,2)))
 				# print(T)
 				for chan in range(chans):
 					# print("prev: " + str(img[row, col, chan]))
-					img[row,col,chan] += np.trace(T @ H[row,col,chan,:,:])
+					x = np.trace(T @ H[row,col,chan,:,:])
+					img[row,col,chan] += x * math.exp((-1.0 * x * x) / (2*sgm * sgm))
 					# print("new: " + str(img[row, col, chan]))
 					# print("added: " + str(np.trace(T @ H[row,col,chan,:,:])))
 		print(str((i * 100) / iterations) + "\% done")
@@ -138,7 +140,7 @@ if __name__ == '__main__':
 	plt.xticks([]), plt.yticks([])
 
 	ax2 = fig.add_subplot(2, 1, 2)
-	ax2.set_title("Original")
+	ax2.set_title("Interpolated")
 	plt.imshow(img_orig[:, :, ::-1])
 	plt.xticks([]), plt.yticks([])
 	
