@@ -10,3 +10,4 @@ images/sequence-lincoln/*
 images/sequence-waterfall/*
 images/*iterations*
 denoising/*.png
+images/inpainting/sequence-spec/*
