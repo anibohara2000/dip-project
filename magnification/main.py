@@ -12,8 +12,8 @@ if __name__ == '__main__':
 	# for iter_i, iterations in enumerate(iterations_l):
 	sigma = 7
 
-	iterations = 5
-	img = cv.imread('../images/magnification/small/barbara_s1.png', cv.IMREAD_COLOR)
+	iterations = 10
+	img = cv.imread('../images/magnification/small/barbara_s2.png', cv.IMREAD_COLOR)
 	final_size = (512, 512)
 	img = cv.resize(img, final_size, interpolation=cv.INTER_NEAREST)
 	img_orig = img.copy()
