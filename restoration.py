@@ -4,17 +4,19 @@ import math
 from matplotlib import pyplot as plt
 
 
-
-
 if __name__ == '__main__':
 
 	## For figure
-	sigma = 3
+	fig = plt.figure()
+	# iterations_l = [5, 10, 15, 20, 30, 50]
+	# for iter_i, iterations in enumerate(iterations_l):
+	sigma = 100
 
-	iterations = 10
+	iterations = 5
 	img = cv.imread('images/lossy_restoration/lossy/barbara_lossy.jpg', cv.IMREAD_COLOR)
-	img = img.astype(float)
 	img_orig = img.copy()
+	img = img.astype(float)
+
 	for i in range(iterations):
 	#############################
 		
@@ -88,7 +90,7 @@ if __name__ == '__main__':
 
 		for row in range(rows):
 			for col in range(cols):
-				G[row, col, :, :] = cv.GaussianBlur(G[row, col, :, :], (3, 3), 5)
+				G[row, col, :, :] = cv.GaussianBlur(G[row, col, :, :], (3, 3), sigma)
 				eig_values, eig_vectors = np.linalg.eig(G[row, col, :, :])
 				if (eig_values[0] > eig_values[1]):
 					eig_value_large[row, col] = eig_values[0]
@@ -111,12 +113,11 @@ if __name__ == '__main__':
 					+ c2*(np.reshape(eig_vector_small[row, col, :],(2,1))@ np.reshape(np.transpose(eig_vector_small[row, col, :]),(1,2)))
 				# print(T)
 				for chan in range(chans):
-					#print("prev: " + str(img[row, col, chan]))
+					# print("prev: " + str(img[row, col, chan]))
 					img[row,col,chan] += np.trace(T @ H[row,col,chan,:,:])
-					#print("new: " + str(img[row, col, chan]))
-					#print("added: " + str(np.trace(T @ H[row,col,chan,:,:])))
-		print(str(i)+" iterations done")
-
+					# print("new: " + str(img[row, col, chan]))
+					# print("added: " + str(np.trace(T @ H[row,col,chan,:,:])))
+		print(str((i * 100) / iterations) + "\% done")
 	# delta_imgRGB = delta_img.copy()
 	# delta_imgRGB[:, :, 0] = delta_img[:, :, 2]
 	# delta_imgRGB[:, :, 2] = delta_img[:, :, 0]
@@ -124,12 +125,21 @@ if __name__ == '__main__':
 	# ax.set_title("Sigma: " + str(sigma))
 	# img[:, :, :] += delta_img[:, :, :]
 
+	# img = img.astype(np.int32)
+	# print(sum(img[img < 0]))
+	# print(sum(img[img > 255]))
 	img[img < 0] = 0
 	img[img > 255] = 255
-	img.astype(np.uint8)
+	img = img.astype(np.uint8)
+	# print(img)
 
-
+	ax1 = fig.add_subplot(2, 1, 1)
 	plt.imshow(img[:, :, ::-1])
+	plt.xticks([]), plt.yticks([])
+
+	ax2 = fig.add_subplot(2, 1, 2)
+	ax2.set_title("Original")
+	plt.imshow(img_orig[:, :, ::-1])
 	plt.xticks([]), plt.yticks([])
 	
 	plt.show()
