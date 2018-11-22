@@ -8,10 +8,10 @@ from matplotlib import pyplot as plt
 
 if __name__ == '__main__':
 
-	iterations = 1500
-	img = cv.imread('images/inpainting/corrupt_images/eye_corrupt.jpg', cv.IMREAD_COLOR)
+	iterations = 10000
+	img = cv.imread('images/inpainting/corrupt_images/walk_corrupt.png', cv.IMREAD_COLOR)
 	img = img.astype(float)
-	mask = cv.imread('images/inpainting/masks/eye_mask.png',cv.IMREAD_GRAYSCALE)
+	mask = cv.imread('images/inpainting/masks/walk_mask.jpg',cv.IMREAD_GRAYSCALE)
 	rows, cols, chans = img.shape
 	for row in range(rows):
 		for col in range(cols):
@@ -117,6 +117,7 @@ if __name__ == '__main__':
 					T= c1*(np.reshape(eig_vector_large[row, col, :],(2,1)) @ np.reshape(np.transpose(eig_vector_large[row, col, :]),(1,2))) + c2*(np.reshape(eig_vector_small[row, col, :],(2,1))@ np.reshape(np.transpose(eig_vector_small[row, col, :]),(1,2)))
 					for chan in range(chans):
 						img[row,col,chan] += np.trace(T @ H[row,col,chan,:,:])
+
 
 		img[img < 0]=0
 		img[img > 255]=255
