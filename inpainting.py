@@ -9,9 +9,9 @@ from matplotlib import pyplot as plt
 if __name__ == '__main__':
 	sigma = 40.0
 	iterations = 10000
-	img = cv.imread('images/inpainting/corrupt_images/street_corrupt.png', cv.IMREAD_COLOR)
+	img = cv.imread('images/inpainting/corrupt_images/lincoln_corrupt.png', cv.IMREAD_COLOR)
 	img = img.astype(float)
-	mask = cv.imread('images/inpainting/masks/mask_screenshot_22.11.2018.png',cv.IMREAD_GRAYSCALE)
+	mask = cv.imread('images/inpainting/masks/lincoln_mask.png',cv.IMREAD_GRAYSCALE)
 	rows, cols, chans = img.shape
 	for row in range(rows):
 		for col in range(cols):
@@ -127,7 +127,7 @@ if __name__ == '__main__':
 			imgRGB[:, :, 2] = img[:, :, 0]
 			plt.imshow(imgRGB)
 			plt.xticks([]), plt.yticks([])
-			plt.savefig(str(i) + "iterations-street.png")
+			plt.savefig(str(i) + "iterations-lincoln.png")
 
 
 		img[img < 0]=0

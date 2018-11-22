@@ -13,7 +13,7 @@ if __name__ == '__main__':
 	rows, cols, chans = img.shape
 	mask = np.zeros([rows,cols])
 	intensities = np.zeros(chans)
-	threshold  = 12000
+	threshold  = 24000
 	for i in range(chans):
 		intensities[i] = int(input())
 
