@@ -12,10 +12,12 @@ if __name__ == '__main__':
 	# for iter_i, iterations in enumerate(iterations_l):
 	sigma = 3
 
-	iterations = 500
-	img = cv.imread('../images/noise_removal/noisy/barbara_noisy.png', cv.IMREAD_COLOR)
+	iterations = 100
+	img = cv.imread('../images/noise_removal/noisy/owl_speckle.png', cv.IMREAD_COLOR)
 	img_orig = img.copy()
 	img = img.astype(float)
+
+	sgm = 40
 
 	for i in range(iterations):
 	#############################
@@ -114,10 +116,19 @@ if __name__ == '__main__':
 				# print(T)
 				for chan in range(chans):
 					# print("prev: " + str(img[row, col, chan]))
-					img[row,col,chan] += np.trace(T @ H[row,col,chan,:,:])
+					x = np.trace(T @ H[row,col,chan,:,:])
+					img[row,col,chan] += x * math.exp((-1.0 * x * x) / (2 * sgm * sgm))
 					# print("new: " + str(img[row, col, chan]))
 					# print("added: " + str(np.trace(T @ H[row,col,chan,:,:])))
 		print(str((i * 100) / iterations) + "\% done")
+		if (i % 10 == 0):
+			imgcopy = img.copy()
+			imgcopy[imgcopy < 0] = 0
+			imgcopy[imgcopy > 255] = 255
+			imgcopy = imgcopy.astype(np.uint8)
+			plt.imshow(imgcopy[:, :, ::-1])
+			plt.xticks([]), plt.yticks([])
+			plt.savefig(str(i) + "iterations-owl.png")
 	# delta_imgRGB = delta_img.copy()
 	# delta_imgRGB[:, :, 0] = delta_img[:, :, 2]
 	# delta_imgRGB[:, :, 2] = delta_img[:, :, 0]

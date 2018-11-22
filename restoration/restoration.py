@@ -17,7 +17,7 @@ if __name__ == '__main__':
 	img_orig = img.copy()
 	img = img.astype(float)
 
-	sgm = 40
+	sgm = 30
 
 	for i in range(iterations):
 	#############################
@@ -117,7 +117,7 @@ if __name__ == '__main__':
 				for chan in range(chans):
 					# print("prev: " + str(img[row, col, chan]))
 					x = np.trace(T @ H[row,col,chan,:,:])
-					img[row,col,chan] += x * math.exp((-1.0 * x * x) / (sgm * sgm))
+					img[row,col,chan] += x * math.exp((-1.0 * x * x) / (2 * sgm * sgm))
 					# print("new: " + str(img[row, col, chan]))
 					# print("added: " + str(np.trace(T @ H[row,col,chan,:,:])))
 		print(str((i * 100) / iterations) + "\% done")

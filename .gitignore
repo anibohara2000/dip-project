@@ -8,3 +8,4 @@ images/sequence-damaged/*
 images/sequence-lincoln/*
 images/sequence-waterfall/*
 images/*iterations*
+denoising/*.png
